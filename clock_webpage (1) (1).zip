@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>實時時鐘 · 網上時鐘</title>
+  <!-- 引入外部樣式表 style.css -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 時鐘顯示區 -->
+  <div class="clock-container">
+    <div class="clock" id="clockDisplay">--:--:--</div>
+    <div class="date" id="dateDisplay">----年--月--日</div>
+  </div>
+
+  <!-- 時鐘程式 (JavaScript) 直接寫在 index.html 中 -->
+  <script>
+    (function() {
+      // 取得顯示元素
+      const clockEl = document.getElementById('clockDisplay');
+      const dateEl = document.getElementById('dateDisplay');
+
+      // 輔助函式：補零至兩位數
+      function padTwo(num) {
+        return num.toString().padStart(2, '0');
+      }
+
+      // 更新時鐘與日期
+      function updateClock() {
+        const now = new Date();
+
+        // 時間：時、分、秒 (24小時制，強制兩位數)
+        const hours = padTwo(now.getHours());
+        const minutes = padTwo(now.getMinutes());
+        const seconds = padTwo(now.getSeconds());
+
+        // 更新時間顯示
+        clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+
+        // 日期：年、月、日 (可讀格式)
+        const year = now.getFullYear();
+        // 月份從 0 開始，所以要加 1；使用補零讓格式統一 (例如 09)
+        const month = padTwo(now.getMonth() + 1);
+        const day = padTwo(now.getDate());
+
+        // 可選：加上星期 (使用中文)
+        const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+        const weekday = weekdays[now.getDay()];
+        // 顯示格式：2025年03月21日 星期五 (可依喜好調整)
+        dateEl.textContent = `${year}年${month}月${day}日 星期${weekday}`;
+      }
+
+      // 初始化：先立即更新一次，避免空白
+      updateClock();
+
+      // 設定計時器：每 1000 毫秒（1秒）更新一次
+      // 使用 setInterval 確保每秒刷新，而不會累積誤差
+      setInterval(updateClock, 1000);
+
+      // 可選：當頁面重新獲得焦點時立即更新（避免背景分頁計時器被節流）
+      document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+          updateClock();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
